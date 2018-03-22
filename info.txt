@@ -1,0 +1,18 @@
+
+Master Wallet
+
+Address
+rU3jrWo57oscQ3eWQFgV4YWExNLdaHNAeH
+
+Secret
+ssCczWA3Bcb7oRs5ukYBSWmNqKaFy
+
+
+rNKr3Lrt5LBCXDdS8hEYyc71f8TJevbzoy
+shV2CdmTfDjCKWXSggJrrzbX4HfkC
+
+Testing 
+{
+    "secret": "snY5z2hurrmaqymMpAYCuEzAxyHKJ",
+    "address": "rhuwPPesuMc2zUbie9KjCtaH6j3uDAuFFw"
+}

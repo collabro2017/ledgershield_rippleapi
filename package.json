@@ -1,0 +1,16 @@
+{
+  "name": "xrp-api",
+  "version": "1.0.0",
+  "description": "Ripple api wrapper.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Basit Raza",
+  "license": "ISC",
+  "dependencies": {
+    "hapi": "^17.2.3",
+    "hapi-pino": "^4.0.3",
+    "ripple-lib": "^0.19.0"
+  }
+}
