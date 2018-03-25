@@ -13,8 +13,8 @@ class XRPAPI {
       server: "wss://s.altnet.rippletest.net:51233"
     });
 
-    this.source_address = "rU3jrWo57oscQ3eWQFgV4YWExNLdaHNAeH";
-    this.source_secret = "ssCczWA3Bcb7oRs5ukYBSWmNqKaFy";
+    this.source_address = "ra6Pi7jHQiXtNCQV5c7c8CN4Grt4h6dmDL";
+    this.source_secret = "shKnhcxzhwPaGgL6NzA2ifnKk2NGw";
   }
 
   async __connect() {
@@ -37,8 +37,9 @@ class XRPAPI {
 
   async preparePayment(address, amount) {
     await this.__connect();
-    const payment = this.buildPaymentObject(address, amount);
-    await this.api.preparePayment(XRPAPI.source_address, payment);
+    const payment = this.buildPaymentObject(address, amount); 
+    console.log(`Payment Object ${JSON.stringify(payment)}`)  
+    return await this.api.preparePayment(this.source_address, payment);
   }
 
   async signTx(tx) {
@@ -52,23 +53,24 @@ class XRPAPI {
   }
 
   async submitTx(signed_tx) {
-    await this.__connect();
+    await this.__connect();    
     return await this.api.submit(signed_tx);
   }
 
   buildPaymentObject(destination, amount) {
+    const amnt = amount.toString()
     const obj = {
       source: {
-        address: XRPAPI.source_address,
+        address: this.source_address,
         maxAmount: {
-          value: amount,
+          value: amnt,
           currency: "XRP"
         }
       },
       destination: {
         address: destination,
         amount: {
-          value: amount,
+          value: amnt,
           currency: "XRP"
         }
       }
