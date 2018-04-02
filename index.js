@@ -3,6 +3,7 @@
 const hapi = require("hapi");
 const ripple_hashes_1 = require("ripple-hashes");
 const XRPAPI = require("./xrp");
+const RedisAPI = require("./redis");
 
 const server = hapi.server({
   host: "localhost",
@@ -10,6 +11,16 @@ const server = hapi.server({
 });
 
 const xrp_api = new XRPAPI();
+const redisAPI = new RedisAPI();
+
+const setinfo = async () => {
+  const dt = await redisAPI.getDt()
+  if(dt === null) {
+    redisAPI.setDt(10000);
+  }
+}
+setinfo()
+
 
 server.route({
   method: "GET",
@@ -22,11 +33,31 @@ server.route({
 server.route({
   method: "POST",
   path: "/wallet/new",
-  handler: (req, h) => {
-    const data = xrp_api.generateAddress();
-    return h.response(data).code(201);
+  handler: async (req, h) => {
+    await redisAPI.incrementDt()
+    const dt = await redisAPI.getDt()
+    const address = xrp_api.getAddress();
+    const r = {
+      address: address,
+      dt: parseInt(dt)
+    }
+    return h.response(r).code(201);
   }
 });
+
+server.route({
+  method: 'GET',
+  path: '/wallet/dt/{dt}',
+  handler: async (req, h) => {
+    const dt = req.params.dt;    
+    const res = await redisAPI.get(dt)
+    console.log(`Response type ${typeof res}`)
+    if(res === 'undefined' || res === undefined || res === null) {
+      return h.response({'message':'Nothing'}).code(204)
+    }
+    return h.response(res).code(200)
+  }
+})
 
 server.route({
   method: "GET",

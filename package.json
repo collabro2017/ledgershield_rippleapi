@@ -10,8 +10,11 @@
   "author": "Basit Raza",
   "license": "ISC",
   "dependencies": {
+    "async-redis": "^1.1.3",
     "hapi": "^17.2.3",
     "hapi-pino": "^4.0.3",
-    "ripple-lib": "^0.19.0"
+    "redis": "^2.8.0",
+    "ripple-lib": "^0.19.0",
+    "ripple-lib-transactionparser": "^0.6.2"
   }
 }
