@@ -53,7 +53,7 @@ server.route({
     const res = await redisAPI.get(dt)
     console.log(`Response type ${typeof res}`)
     if(res === 'undefined' || res === undefined || res === null) {
-      return h.response({'message':'Nothing'}).code(204)
+      return h.response({'message':'Nothing'}).code(404)
     }
     return h.response(res).code(200)
   }

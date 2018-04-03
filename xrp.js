@@ -8,9 +8,10 @@ const RippleAPI = require("ripple-lib").RippleAPI;
 // wss://s.altnet.rippletest.net:51233
 
 class XRPAPI {
+
   constructor() {
     this.api = new RippleAPI({
-      server: "wss://s.altnet.rippletest.net:51233"
+      server: "wss://s.altnet.rippletest.net:51233/"
     });
 
     this.source_address = "ra6Pi7jHQiXtNCQV5c7c8CN4Grt4h6dmDL";
@@ -21,13 +22,21 @@ class XRPAPI {
     if (!this.api.isConnected()) await this.api.connect();
   }
 
+  getAddress() {
+    return this.source_address;
+  }
+  getDestinationTag() {
+    return new Date().valueOf()
+  }
+  
+
   generateAddress() {
     return this.api.generateAddress();
   }
 
-  async getAccountInfo(address) {
+  async getAccountInfo() {
     await this.__connect();
-    return await this.api.getAccountInfo(address);
+    return await this.api.getAccountInfo(this.source_address);
   }
 
   async getTxInfo(txhash) {
@@ -75,9 +84,19 @@ class XRPAPI {
         }
       }
     };
-
     return obj;
   }
+
+  async getAccountTx(min, max) {
+    await this.__connect();
+    return await this.api.getTransactions(this.source_address, {
+      minLedgerVersion: min,
+      maxLedgerVersion: max,      
+      earliestFirst: false
+    })
+  }
+
+  
 }
 
 module.exports = XRPAPI;
