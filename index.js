@@ -97,7 +97,7 @@ server.route({
     if (typeof payload === "string") {
       payload = JSON.parse(payload);
     }
-    // console.log(payload)
+    console.log(payload)
 
     // await payload.map(async (item, i) => {
     //   const payment = await xrp_api.preparePayment(item.address, item.amount)
@@ -108,24 +108,37 @@ server.route({
     // })
     const outputs = [];
     try {
-      for (let i = 0; i < payload.length; i++) {
-        const item = payload[i];
-        const payment = await xrp_api.preparePayment(item.address, item.amount);
-        // console.log(payment);
-        const tx = await xrp_api.signTx(payment.txJSON);
+      const txid = payload.txid
+      const outs = payload.outs
+      for (let i = 0; i < outs.length; i++) {
+        const item = outs[i];
+        const tx_hash = await redisAPI.getTxStatus(txid, item.address)
 
-        const response = await xrp_api.submitTx(tx.signedTransaction);
-        const tx_id = ripple_hashes_1.computeBinaryTransactionHash(
-          tx.signedTransaction
-        );
-        console.log(`TxID ${tx_id} Response ${JSON.stringify(response)}`);
-        if (response.resultCode === "tesSUCCESS") {
-          item["tx_hash"] = tx_id;
+        if (tx_hash === null) {
+          const payment = await xrp_api.preparePayment(item.address, item.amount);
+          // console.log(payment);
+          const tx = await xrp_api.signTx(payment.txJSON);
+
+          const response = await xrp_api.submitTx(tx.signedTransaction);
+          const tx_id = ripple_hashes_1.computeBinaryTransactionHash(
+            tx.signedTransaction
+          );
+          console.log(`TxID ${tx_id} Response ${JSON.stringify(response)}`);
+          if (response.resultCode === "tesSUCCESS") {
+            item["tx_hash"] = tx_id;
+            await redisAPI.getTxStatus(txid, item.address, tx_id)
+          } else {
+            item["tx_hash"] = "";
+          }
+          item["comment"] = response.resultMessage;
         } else {
-          item["tx_hash"] = "";
+          item["comment"] = "Double spend!"
         }
-        item["comment"] = response.resultMessage;
+
+        console.log(item)
+        
         outputs.push(item);
+        
       }
     } catch (err) {
       console.log(err);

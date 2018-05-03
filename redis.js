@@ -52,6 +52,16 @@ class RedisAPI {
   async getDt() {
     return await this.client.get('destinationTag')
   }
+
+  async setTxStatus(txid, address, v) {
+    const key = `tx:${txid}:${address}`
+    return await this.client.set(key, v);
+  }
+
+  async getTxStatus(txid, address) {
+    const key = `tx:${txid}:${address}`
+    return await this.client.get(key);
+  }
 }
 
 
